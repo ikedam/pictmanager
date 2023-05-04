@@ -38,3 +38,10 @@ services:
       - http
       - -public-host
       - storage:4443
+  terraform:
+    profiles: [dummy]
+    image: hashicorp/terraform:1.4.6
+    volumes:
+      - ./terraform:/workspace
+      - ${CLOUDSDK_CONFIG:-}:/root/.config/gcloud
+    working_dir: /workspace
