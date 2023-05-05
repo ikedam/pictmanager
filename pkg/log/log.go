@@ -3,8 +3,10 @@ package log
 import (
 	"context"
 	"fmt"
+	"time"
 
 	"go.uber.org/zap"
+	"go.uber.org/zap/zapcore"
 )
 
 var (
@@ -17,6 +19,7 @@ func init() {
 	logLevel = zap.NewAtomicLevelAt(zap.InfoLevel)
 	logConfig := zap.NewProductionConfig()
 	logConfig.Level = logLevel
+	logConfig.EncoderConfig.EncodeTime = zapcore.TimeEncoderOfLayout(time.RFC3339)
 	rootLogger, err = logConfig.Build()
 	if err != nil {
 		panic(err)

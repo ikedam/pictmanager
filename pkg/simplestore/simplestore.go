@@ -90,7 +90,7 @@ func (c *Client) Get(ctx context.Context, target any) error {
 	}
 	err = snapshot.DataTo(target)
 	if err != nil {
-		return err
+		return errors.WithMessagef(ErrProgramming, "failed to serialize data to %T from %+v: %+v", target, snapshot.Data(), err)
 	}
 	return nil
 }

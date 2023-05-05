@@ -1,5 +1,30 @@
 version: '3'
 services:
+  client:
+    image: node:18.16.0-alpine3.16
+    environment:
+      - http_proxy
+      - https_proxy
+      - no_proxy=server,${no_proxy:-}
+    volumes:
+      - ./client:/app
+      - /app/node_modules
+    command:
+      - /bin/sh
+      - -e
+      - -x
+      - -c
+      - |
+        npm install
+        exec npm start -- \
+          --host 0.0.0.0 \
+          --poll 1000 \
+          --proxy-config proxy.conf.js
+    working_dir: /app
+    ports:
+      - 4200:4200
+    depends_on:
+      - server
   server:
     image: golang:1.20.4-bullseye
     environment:
@@ -15,6 +40,10 @@ services:
     depends_on:
       - firestore
       - storage
+    command:
+      - go
+      - run
+      - ./cmd/server
   firestore:
     build:
       context: docker/firestore
@@ -38,6 +67,29 @@ services:
       - http
       - -public-host
       - storage:4443
+  uploader:
+    profiles: [dummy]
+    image: golang:1.20.4-bullseye
+    environment:
+      - http_proxy
+      - https_proxy
+      - no_proxy=storage,firestore,${no_proxy:-}
+      - CLOUDSDK_CORE_PROJECT=pictmanager
+      - FIRESTORE_EMULATOR_HOST=firestore:8080
+      - STORAGE_EMULATOR_HOST=storage:4443
+    volumes:
+      - .:/app
+    working_dir: /app
+    depends_on:
+      - firestore
+      - storage
+    command:
+      - go
+      - run
+      - ./cmd/uploader
+      - --gcs
+      - gs://pictmanager
+      - images
   terraform:
     profiles: [dummy]
     image: hashicorp/terraform:1.4.6

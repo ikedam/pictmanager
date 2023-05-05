@@ -113,7 +113,7 @@ func (u *Uploader) upload(ctx context.Context, fsClient *simplestore.Client, buc
 		return errors.Wrapf(err, "failed to check existence of Image %v", imageInfo.ID)
 	}
 	if exists {
-		log.Info(ctx, "skip as already exists", zap.String("path", objectPath))
+		log.Info(ctx, "skip as already exists", zap.String("localfile", objectPath))
 		return nil
 	}
 
@@ -162,7 +162,13 @@ func (u *Uploader) upload(ctx context.Context, fsClient *simplestore.Client, buc
 		return nil
 	}
 	contentType := "image/" + imageFormat
-	log.Debugf(ctx, "uploading %v to %v (%v)", path, objectPath, contentType)
+	log.Info(
+		ctx,
+		"uploading",
+		zap.String("localfile", path),
+		zap.String("gcs_path", objectPath),
+		zap.String("content_type", contentType),
+	)
 
 	err = func() error {
 		w := thumbnail.NewWriter(ctx)
