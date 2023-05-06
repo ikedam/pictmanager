@@ -21,5 +21,8 @@ func (c *Controller) GetImageList(ctx context.Context) ([]*model.Image, error) {
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to query Image")
 	}
+	for _, image := range imageList {
+		image.FillURL(c.config.GCSBaseURL())
+	}
 	return imageList, nil
 }

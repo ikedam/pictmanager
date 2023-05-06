@@ -8,6 +8,7 @@ import (
 	"github.com/ikedam/pictmanager/pkg/log"
 	"github.com/ikedam/pictmanager/pkg/server"
 	"github.com/spf13/cobra"
+	"github.com/spf13/pflag"
 	"github.com/spf13/viper"
 	"go.uber.org/zap"
 )
@@ -17,8 +18,13 @@ var rootCmd = &cobra.Command{
 	Use:          "server",
 	Short:        "server starts api server",
 	RunE: func(cmd *cobra.Command, args []string) error {
+		ctx := context.Background()
 		var cfg config.Config
 		err := viper.Unmarshal(&cfg)
+		if err != nil {
+			return err
+		}
+		err = cfg.Build()
 		if err != nil {
 			return err
 		}
@@ -26,7 +32,6 @@ var rootCmd = &cobra.Command{
 		if project != "" {
 			os.Setenv("CLOUDSDK_CORE_PROJECT", project)
 		}
-		ctx := context.Background()
 		s, err := server.New(ctx, &cfg)
 		if err != nil {
 			return err
@@ -37,6 +42,7 @@ var rootCmd = &cobra.Command{
 
 func init() {
 	cobra.OnInitialize(initLevel)
+	cobra.OnInitialize(setDefault)
 
 	rootCmd.PersistentFlags().String("log-level", "debug", "Log level.")
 	viper.BindPFlag("logLevel", rootCmd.PersistentFlags().Lookup("log-level"))
@@ -44,6 +50,8 @@ func init() {
 	viper.BindPFlag("project", rootCmd.Flags().Lookup("project"))
 	rootCmd.Flags().String("gcs", "", "GCS directory to store images.")
 	viper.BindPFlag("gcs", rootCmd.Flags().Lookup("gcs"))
+	rootCmd.Flags().String("gcs-public-base", "https://storage.googleapis.com", "GCS public base URL.")
+	viper.BindPFlag("gcsPublicBase", rootCmd.Flags().Lookup("gcs-public-base"))
 }
 
 func initLevel() {
@@ -52,6 +60,17 @@ func initLevel() {
 	if err != nil {
 		log.Fatalf(context.Background(), "Invalid log level specified: %v: %+v", level, err)
 	}
+}
+
+func setDefault() {
+	viper.AutomaticEnv()
+	viper.SetEnvPrefix("pictmanager")
+
+	rootCmd.Flags().VisitAll(func(f *pflag.Flag) {
+		if viper.IsSet(f.Name) && viper.GetString(f.Name) != "" {
+			rootCmd.Flags().Set(f.Name, viper.GetString(f.Name))
+		}
+	})
 }
 
 func Execute() {

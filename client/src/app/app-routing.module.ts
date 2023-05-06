@@ -1,7 +1,11 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 
-const routes: Routes = [];
+import { ImageListComponent } from './image-list/image-list.component';
+
+const routes: Routes = [
+  { path: '', component: ImageListComponent, },
+];
 
 @NgModule({
   imports: [RouterModule.forRoot(routes)],

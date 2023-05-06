@@ -20,6 +20,10 @@ type Client struct {
 	FirestoreClient *firestore.Client
 }
 
+type SimpleStoreLoader interface {
+	OnLoadFromFirestore() error
+}
+
 var projectEnvNameList = []string{
 	"CLOUDSDK_CORE_PROJECT",
 	"GOOGLE_CLOUD_PROJECT",
@@ -91,6 +95,13 @@ func (c *Client) Get(ctx context.Context, target any) error {
 	err = snapshot.DataTo(target)
 	if err != nil {
 		return errors.WithMessagef(ErrProgramming, "failed to serialize data to %T from %+v: %+v", target, snapshot.Data(), err)
+	}
+	loader, ok := target.(SimpleStoreLoader)
+	if ok {
+		err := loader.OnLoadFromFirestore()
+		if err != nil {
+			return errors.Wrap(err, "failed in OnLoadFromFirestore")
+		}
 	}
 	return nil
 }

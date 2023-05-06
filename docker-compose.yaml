@@ -25,6 +25,7 @@ services:
       - 4200:4200
     depends_on:
       - server
+      - storage
   server:
     image: golang:1.20.4-bullseye
     environment:
@@ -33,6 +34,7 @@ services:
       - no_proxy=storage,firestore,${no_proxy:-}
       - CLOUDSDK_CORE_PROJECT=pictmanager
       - PICTMANAGER_GCS=gs://pictmanager
+      - PICTMANAGER_GCSPUBLICBASE=http://localhost:4200/image
       - FIRESTORE_EMULATOR_HOST=firestore:8080
       - STORAGE_EMULATOR_HOST=storage:4443
     volumes:
