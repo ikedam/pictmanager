@@ -15,6 +15,7 @@ type Server struct {
 
 func New(ctx context.Context, config *config.Config) (*Server, error) {
 	e := echo.New()
+	e.HideBanner = true
 	e.Use(middleware.Logger())
 	err := Route(ctx, config, e)
 	if err != nil {

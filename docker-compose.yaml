@@ -32,6 +32,7 @@ services:
       - https_proxy
       - no_proxy=storage,firestore,${no_proxy:-}
       - CLOUDSDK_CORE_PROJECT=pictmanager
+      - PICTMANAGER_GCS=gs://pictmanager
       - FIRESTORE_EMULATOR_HOST=firestore:8080
       - STORAGE_EMULATOR_HOST=storage:4443
     volumes:
@@ -41,9 +42,15 @@ services:
       - firestore
       - storage
     command:
-      - go
-      - run
-      - ./cmd/server
+      - /bin/bash
+      - -e
+      - -x
+      - -c
+      - |
+        if [[ ! -f "/go/bin/air" ]]; then
+          go install github.com/cosmtrek/air@v1.43.0
+        fi
+        air
   firestore:
     build:
       context: docker/firestore
