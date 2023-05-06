@@ -26,6 +26,12 @@
 		{
 			"type":"volume",
 			"source":"pictmanager-nodemodules",
-			"target":"${containerWorkspaceFolder}/client/node_modules"}
+			"target":"${containerWorkspaceFolder}/client/node_modules"
+		},
+		{
+			"type":"volume",
+			"source":"pictmanager-angular",
+			"target":"${containerWorkspaceFolder}/client/.angular"
+		}
 	]
 }

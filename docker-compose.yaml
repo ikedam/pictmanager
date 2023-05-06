@@ -9,6 +9,7 @@ services:
     volumes:
       - ./client:/app
       - /app/node_modules
+      - /app/.angular
     command:
       - /bin/sh
       - -e
@@ -106,3 +107,26 @@ services:
       - ./terraform:/workspace
       - ${CLOUDSDK_CONFIG:-}:/root/.config/gcloud
     working_dir: /workspace
+  deploy:
+    profiles: [dummy]
+    image: gcr.io/google.com/cloudsdktool/google-cloud-cli:429.0.0-alpine
+    volumes:
+      - .:/workspace
+      - /workspace/client/node_modules
+      - ${CLOUDSDK_CONFIG:-}:/root/.config/gcloud
+    environment:
+      - CLOUDSDK_CORE_PROJECT=ikedam
+    working_dir: /workspace
+    command:
+      - /bin/sh
+      - -e
+      - -x
+      - -c
+      - |
+        apk add --no-cache nodejs npm
+        (cd client && npm install && npm run build)
+        if [ -d static ]; then
+          rm -rf static
+        fi
+        mv client/dist/pictmanager static
+        gcloud app deploy --ignore-file=.gcloudignore --quiet

@@ -1,0 +1,13 @@
+/.git
+/.devcontainer
+/.vscode
+/client
+/docker
+/images
+/terraform
+/tmp
+/.air.toml
+/.gcloudignore
+/.gitignore
+/docker-compose.yaml
+*.exe

@@ -2,6 +2,7 @@ package server
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/ikedam/pictmanager/pkg/config"
 	"github.com/ikedam/pictmanager/pkg/log/echolog"
@@ -29,5 +30,5 @@ func New(ctx context.Context, config *config.Config) (*Server, error) {
 }
 
 func (s *Server) Start(ctx context.Context) error {
-	return s.e.Start(":8080")
+	return s.e.Start(fmt.Sprintf(":%v", s.config.Port))
 }

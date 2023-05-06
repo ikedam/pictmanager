@@ -1,4 +1,5 @@
 /docker/storage/pictmanager
 /images
+/static
 /tmp
 *.exe

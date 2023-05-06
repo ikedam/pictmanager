@@ -3,7 +3,6 @@ package log
 import (
 	"context"
 	"fmt"
-	"time"
 
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
@@ -14,12 +13,32 @@ var (
 	rootLogger *zap.Logger
 )
 
+var logLevelSeverity = map[zapcore.Level]string{
+	// https://cloud.google.com/logging/docs/reference/v2/rest/v2/LogEntry#LogSeverity
+	// No DEFAULT
+	zapcore.DebugLevel: "DEBUG",
+	zapcore.InfoLevel:  "INFO",
+	// No NOTICE
+	zapcore.WarnLevel:   "WARNING",
+	zapcore.ErrorLevel:  "ERROR",
+	zapcore.DPanicLevel: "CRITICAL",
+	zapcore.PanicLevel:  "ALERT",
+	zapcore.FatalLevel:  "EMERGENCY",
+}
+
 func init() {
 	var err error
 	logLevel = zap.NewAtomicLevelAt(zap.InfoLevel)
 	logConfig := zap.NewProductionConfig()
 	logConfig.Level = logLevel
-	logConfig.EncoderConfig.EncodeTime = zapcore.TimeEncoderOfLayout(time.RFC3339)
+	logConfig.EncoderConfig.EncodeTime = zapcore.RFC3339NanoTimeEncoder
+	// https://cloud.google.com/logging/docs/structured-logging
+	logConfig.EncoderConfig.TimeKey = "time"
+	logConfig.EncoderConfig.LevelKey = "severity"
+	logConfig.EncoderConfig.MessageKey = "message"
+	logConfig.EncoderConfig.EncodeLevel = func(l zapcore.Level, enc zapcore.PrimitiveArrayEncoder) {
+		enc.AppendString(logLevelSeverity[l])
+	}
 	rootLogger, err = logConfig.Build()
 	if err != nil {
 		panic(err)

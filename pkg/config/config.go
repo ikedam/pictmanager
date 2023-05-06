@@ -8,6 +8,7 @@ import (
 )
 
 type Config struct {
+	Port          int
 	GCS           string
 	GCSPublicBase string
 	gcsBucket     string

@@ -3,6 +3,7 @@ package cmd
 import (
 	"context"
 	"os"
+	"strconv"
 
 	"github.com/ikedam/pictmanager/pkg/config"
 	"github.com/ikedam/pictmanager/pkg/log"
@@ -44,10 +45,20 @@ func init() {
 	cobra.OnInitialize(initLevel)
 	cobra.OnInitialize(setDefault)
 
+	portStr := os.Getenv("PORT")
+	if portStr == "" {
+		portStr = "8080"
+	}
+	port, err := strconv.Atoi(portStr)
+	if err != nil {
+		panic(err)
+	}
 	rootCmd.PersistentFlags().String("log-level", "debug", "Log level.")
 	viper.BindPFlag("logLevel", rootCmd.PersistentFlags().Lookup("log-level"))
 	rootCmd.Flags().String("project", "", "ID of Google Cloud Project.")
 	viper.BindPFlag("project", rootCmd.Flags().Lookup("project"))
+	rootCmd.Flags().Int("port", port, "Port to bind")
+	viper.BindPFlag("port", rootCmd.Flags().Lookup("port"))
 	rootCmd.Flags().String("gcs", "", "GCS directory to store images.")
 	viper.BindPFlag("gcs", rootCmd.Flags().Lookup("gcs"))
 	rootCmd.Flags().String("gcs-public-base", "https://storage.googleapis.com", "GCS public base URL.")
