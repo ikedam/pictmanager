@@ -10,12 +10,27 @@ import { ImageService } from 'src/app/service/image.service';
 })
 export class ImageListComponent implements OnInit {
   imageList: Image[] = [];
+  hasMore = true
 
   constructor(private imageService: ImageService) {}
 
   ngOnInit() {
-    this.imageService.getImageList(20).subscribe(imageList => {
+    const count = 20;
+    this.imageService.getImageList(count).subscribe(imageList => {
       this.imageList = imageList;
+      if (imageList.length < count) {
+        this.hasMore = false
+      }
+    });
+  }
+
+  onClickMore() {
+    const count = 20;
+    this.imageService.getImageList(count, this.imageList[this.imageList.length - 1]).subscribe(imageList => {
+      this.imageList.push(...imageList);
+      if (imageList.length < count) {
+        this.hasMore = false
+      }
     });
   }
 }

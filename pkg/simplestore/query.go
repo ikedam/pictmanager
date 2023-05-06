@@ -11,6 +11,7 @@ import (
 
 type Query struct {
 	firestore.Query
+	c          *Client
 	targetList reflect.Value
 	targetType reflect.Type
 }
@@ -39,6 +40,7 @@ func (c *Client) Query(target any) (*Query, error) {
 	collection := c.FirestoreClient.Collection(typeName)
 	return &Query{
 		Query:      collection.Query,
+		c:          c,
 		targetList: v,
 		targetType: t,
 	}, nil
@@ -83,4 +85,15 @@ func (q *Query) Do(ctx context.Context) error {
 		q.targetList.Set(reflect.Append(q.targetList, v))
 	}
 	return nil
+}
+
+func (q *Query) DoAfterByID(ctx context.Context, id string) error {
+	doc := q.c.FirestoreClient.Collection(q.targetType.Name()).Doc(id)
+	snapshot, err := doc.Get(ctx)
+	if err != nil {
+		return errors.Wrapf(err, "failed to stat %v/%v", q.targetType.Name(), id)
+	}
+	newQ := *q
+	newQ.Query = q.Query.StartAfter(snapshot)
+	return newQ.Do(ctx)
 }

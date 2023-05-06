@@ -9,15 +9,20 @@ import (
 	"github.com/pkg/errors"
 )
 
-func (c *Controller) GetImageList(ctx context.Context) ([]*model.Image, error) {
+func (c *Controller) GetImageList(ctx context.Context, count int, after string) ([]*model.Image, error) {
 	client, err := simplestore.New(ctx)
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to initialize firestore client")
 	}
 	var imageList []*model.Image
-	err = client.MustQuery(&imageList).
+	query := client.MustQuery(&imageList).
 		OrderBy("PublishTime", firestore.Desc).
-		Limit(10).Do(ctx)
+		Limit(count)
+	if after == "" {
+		err = query.Do(ctx)
+	} else {
+		err = query.DoAfterByID(ctx, after)
+	}
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to query Image")
 	}

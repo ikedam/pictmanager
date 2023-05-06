@@ -12,8 +12,14 @@ export class ImageService {
   constructor(private http: HttpClient) {}
 
   public getImageList(count: number, after?: Image): Observable<Image[]> {
+    const params = new URLSearchParams({
+      count: String(count),
+    });
+    if (after !== undefined) {
+      params.append('after', after.id);
+    }
     return this.http.get<Image[]>(
-      '/api/image/',
+      '/api/image/?' + params.toString(),
     ).pipe(
       map((imageList: Image[]) => {
         return imageList.map(

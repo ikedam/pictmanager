@@ -4,8 +4,8 @@ import (
 	"context"
 
 	"github.com/ikedam/pictmanager/pkg/config"
+	"github.com/ikedam/pictmanager/pkg/log/echolog"
 	"github.com/labstack/echo/v4"
-	"github.com/labstack/echo/v4/middleware"
 )
 
 type Server struct {
@@ -16,7 +16,8 @@ type Server struct {
 func New(ctx context.Context, config *config.Config) (*Server, error) {
 	e := echo.New()
 	e.HideBanner = true
-	e.Use(middleware.Logger())
+	e.HTTPErrorHandler = HandleRFC7807ErrorHandler(e)
+	e.Use(echolog.Middleware())
 	err := Route(ctx, config, e)
 	if err != nil {
 		return nil, err

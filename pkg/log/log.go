@@ -26,6 +26,27 @@ func init() {
 	}
 }
 
+type loggerContextKeyType string
+
+var loggerContextKey = loggerContextKeyType("logger")
+
+func NewLogger(fields ...zap.Field) *zap.Logger {
+	return rootLogger.With(fields...)
+}
+
+func CtxWithLogger(ctx context.Context, fields ...zap.Field) context.Context {
+	logger := rootLogger.With(fields...)
+	return context.WithValue(ctx, loggerContextKey, logger)
+}
+
+func FromCtx(ctx context.Context) *zap.Logger {
+	logger := ctx.Value(loggerContextKey)
+	if logger == nil {
+		return rootLogger
+	}
+	return logger.(*zap.Logger)
+}
+
 func SetLevelByName(level string) error {
 	parsedLevel, err := zap.ParseAtomicLevel(level)
 	if err != nil {
@@ -36,7 +57,7 @@ func SetLevelByName(level string) error {
 }
 
 func Debug(ctx context.Context, msg string, fields ...zap.Field) {
-	rootLogger.Debug(msg, fields...)
+	FromCtx(ctx).Debug(msg, fields...)
 }
 
 func Debugf(ctx context.Context, format string, args ...any) {
@@ -44,15 +65,15 @@ func Debugf(ctx context.Context, format string, args ...any) {
 }
 
 func Info(ctx context.Context, msg string, fields ...zap.Field) {
-	rootLogger.Info(msg, fields...)
+	FromCtx(ctx).Info(msg, fields...)
 }
 
 func Error(ctx context.Context, msg string, fields ...zap.Field) {
-	rootLogger.Error(msg, fields...)
+	FromCtx(ctx).Error(msg, fields...)
 }
 
 func Fatal(ctx context.Context, msg string, fields ...zap.Field) {
-	rootLogger.Fatal(msg, fields...)
+	FromCtx(ctx).Fatal(msg, fields...)
 }
 
 func Fatalf(ctx context.Context, format string, args ...any) {
