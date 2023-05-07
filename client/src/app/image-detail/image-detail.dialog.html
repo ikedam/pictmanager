@@ -1,32 +1,25 @@
 <mat-card><mat-card-content>
 <div mat-dialog-content>
-  <a class="image" href="{{image.imageURL}}" target="_blank"><img src="{{image.imageURL}}" alt="{{image.id}}" /></a>
+  <div class="image-container">
+    <a class="image" href="{{image.imageURL}}" target="_blank"><img src="{{image.imageURL}}" alt="{{image.id}}" /></a>
+  </div>
   <div>
     <mat-chip *ngFor="let tag of image.tagList">{{tag}}</mat-chip>
   </div>
-  <table><tbody>
-    <tr>
-      <th>説明</th>
-      <td>{{image.description}}</td>
-    </tr>
-    <tr>
-      <th>制作メモ</th>
-      <td>{{image.makingNote}}</td>
-    </tr>
-    <tr *ngIf="image.twitterURL !== ''">
-      <th>Twitter</th>
-      <td><a href="{{image.twitterURL}}" target="_blank">{{image.tweetComment?image.tweetComment:'Twitter'}}</a></td>
-    </tr>
-    <tr>
-      <th>作成日</th>
-      <td>{{image.publishTime.toISOString()}}</td>
-    </tr>
-    <tr>
-      <th>更新日</th>
-      <td>{{image.updateTime.toISOString()}}</td>
-    </tr>
-  </tbody></table>
-  
+  <dl>
+    <dt>説明</dt>
+      <dd>{{image.description}}</dd>
+    <dt>制作メモ</dt>
+      <dd>{{image.makingNote}}</dd>
+    <ng-container *ngIf="image.twitterURL !== ''">
+      <dt>Twitter</dt>
+        <dd><a href="{{image.twitterURL}}" target="_blank">{{image.tweetComment?image.tweetComment:'Twitter'}}</a></dd>
+    </ng-container>
+    <dt>作成日</dt>
+      <dd>{{image.publishTime.toISOString()}}</dd>
+    <dt>更新日</dt>
+      <dd>{{image.updateTime.toISOString()}}</dd>
+    </dl>
 </div>
 <div mat-dialog-actions>
   <button mat-button mat-dialog-close (click)="onClose()">Close</button>
