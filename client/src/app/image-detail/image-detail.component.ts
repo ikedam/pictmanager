@@ -1,10 +1,10 @@
-import { OnInit, Component, Inject, OnDestroy } from '@angular/core';
-import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { OnInit, Component, OnDestroy } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 
-import { Image } from 'src/app/model/image';
 import { ImageService } from 'src/app/service/image.service';
+import { ImageDialogComponent } from './image-detail.dialog';
 
 @Component({
   selector: 'app-image-detail',
@@ -28,7 +28,7 @@ export class ImageDetailComponent implements OnInit, OnDestroy {
         data: image,
       });
   
-      this.subscription.add(dialogRef.afterClosed().subscribe(_ => {
+      this.subscription.add(dialogRef.afterClosed().subscribe(() => {
         this.router.navigate(['../..'], { relativeTo: this.route, });
       }));
     });
@@ -36,21 +36,5 @@ export class ImageDetailComponent implements OnInit, OnDestroy {
 
   ngOnDestroy() {
     this.subscription.unsubscribe();
-  }
-}
-
-@Component({
-  selector: 'app-image-dialog',
-  templateUrl: 'image-detail.dialog.html',
-  styleUrls: ['./image-detail.dialog.scss']
-})
-export class ImageDialogComponent {
-  constructor(
-    public dialogRef: MatDialogRef<ImageDialogComponent>,
-    @Inject(MAT_DIALOG_DATA) public image: Image,
-  ) {}
-
-  onClose(): void {
-    this.dialogRef.close();
   }
 }

@@ -12,7 +12,8 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { ImageListComponent } from './image-list/image-list.component';
-import { ImageDetailComponent, ImageDialogComponent } from './image-detail/image-detail.component';
+import { ImageDialogComponent } from './image-detail/image-detail.dialog';
+import { ImageDetailComponent } from './image-detail/image-detail.component';
 import { MatDialogModule } from '@angular/material/dialog';
 
 @NgModule({
