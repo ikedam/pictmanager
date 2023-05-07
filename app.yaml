@@ -9,6 +9,11 @@ env_variables:
   PICTMANAGER_GCS: gs://ikadam-picts
 
 handlers:
+  - url: /api/admin/.*
+    script: auto
+    secure: always
+    redirect_http_response_code: 301
+    login: admin
   - url: /api/.*
     script: auto
     secure: always
