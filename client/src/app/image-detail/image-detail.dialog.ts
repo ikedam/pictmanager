@@ -3,6 +3,8 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 
 import { Image } from 'src/app/model/image';
 import { ImageService } from '../service/image.service';
+import { SessionService } from '../service/session.service';
+import { Session } from '../model/session';
 
 @Component({
   selector: 'app-image-dialog',
@@ -26,7 +28,12 @@ export class ImageDialogComponent {
     private dialogRef: MatDialogRef<ImageDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public image: Image,
     private imageService: ImageService,
+    private sessionService: SessionService,
   ) {}
+
+  get session(): Session|undefined {
+    return this.sessionService.session;
+  }
 
   onClose(): void {
     this.dialogRef.close();

@@ -65,7 +65,7 @@
 </div>
 <div mat-dialog-actions *ngIf="!edit">
   <button mat-button mat-dialog-close (click)="onClose()">閉じる</button>
-  <button mat-button (click)="onEditStart()">編集</button>
+  <button mat-button [disabled]="!session?.login" (click)="onEditStart()">編集</button>
 </div>
 <div mat-dialog-actions *ngIf="edit">
   <button mat-button (click)="onEditSave()">保存</button>
