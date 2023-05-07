@@ -1,7 +1,8 @@
-<div fxLayout="row wrap">
+<router-outlet></router-outlet>
+<div fxLayout="row wrap" fxLayoutAlign="center center">
   <div fxFlex="10" fxFlex.md="16.6" fxFlex.sm="25" fxFlex.xs="33.3" *ngFor="let image of imageList">
     <mat-card>
-      <img mat-card-image src="{{image.thumbnailURL}}" alt="{{image.id}}">
+      <a routerLink="./image/{{image.id}}"><img mat-card-image src="{{image.thumbnailURL}}" alt="{{image.id}}"></a>
     </mat-card>
   </div>
   <div fxFlex="10" fxFlex.md="16.6" fxFlex.sm="25" fxFlex.xs="33.3">

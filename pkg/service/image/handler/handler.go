@@ -40,5 +40,23 @@ func Route(ctx context.Context, config *config.Config, g *echo.Group) error {
 		}
 		return ec.JSON(http.StatusOK, imageList)
 	})
+	g.GET("/:id", func(ec echo.Context) error {
+		var request struct {
+			ID string `param:"id"`
+		}
+		err := ec.Bind(&request)
+		if err != nil {
+			return rfc7807.BadRequest().WithError(err)
+		}
+		ctx := ec.Request().Context()
+		image, err := c.GetImage(ctx, request.ID)
+		if err != nil {
+			return err
+		}
+		if image == nil {
+			return rfc7807.NotFound()
+		}
+		return ec.JSON(http.StatusOK, image)
+	})
 	return nil
 }

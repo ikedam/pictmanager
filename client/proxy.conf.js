@@ -2,11 +2,11 @@ const proxy = {
   '/api': {
     target: 'http://server:8080'
   },
-  '/image': {
+  '/storage': {
     target: 'http://storage:4443',
     changeOrigin: true,
     pathRewrite: {
-      '^/image': ''
+      '^/storage': ''
     }
   }
 };

@@ -100,3 +100,7 @@ func As(err error) *Error {
 func BadRequest() *Error {
 	return New(http.StatusBadRequest).WithTitle("Bad Request")
 }
+
+func NotFound() *Error {
+	return New(http.StatusNotFound).WithTitle("Not Found")
+}

@@ -1,0 +1,34 @@
+<mat-card><mat-card-content>
+<div mat-dialog-content>
+  <a class="image" href="{{image.imageURL}}" target="_blank"><img src="{{image.imageURL}}" alt="{{image.id}}" /></a>
+  <div>
+    <mat-chip *ngFor="let tag of image.tagList">{{tag}}</mat-chip>
+  </div>
+  <table><tbody>
+    <tr>
+      <th>説明</th>
+      <td>{{image.description}}</td>
+    </tr>
+    <tr>
+      <th>制作メモ</th>
+      <td>{{image.makingNote}}</td>
+    </tr>
+    <tr *ngIf="image.twitterURL !== ''">
+      <th>Twitter</th>
+      <td><a href="{{image.twitterURL}}" target="_blank">{{image.tweetComment?image.tweetComment:'Twitter'}}</a></td>
+    </tr>
+    <tr>
+      <th>作成日</th>
+      <td>{{image.publishTime.toISOString()}}</td>
+    </tr>
+    <tr>
+      <th>更新日</th>
+      <td>{{image.updateTime.toISOString()}}</td>
+    </tr>
+  </tbody></table>
+  
+</div>
+<div mat-dialog-actions>
+  <button mat-button mat-dialog-close (click)="onClose()">Close</button>
+</div>
+</mat-card-content></mat-card>

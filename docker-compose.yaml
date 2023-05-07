@@ -35,7 +35,7 @@ services:
       - no_proxy=storage,firestore,${no_proxy:-}
       - CLOUDSDK_CORE_PROJECT=pictmanager
       - PICTMANAGER_GCS=gs://pictmanager
-      - PICTMANAGER_GCSPUBLICBASE=http://localhost:4200/image
+      - PICTMANAGER_GCSPUBLICBASE=http://localhost:4200/storage
       - FIRESTORE_EMULATOR_HOST=firestore:8080
       - STORAGE_EMULATOR_HOST=storage:4443
     volumes:

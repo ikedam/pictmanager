@@ -1,0 +1,17 @@
+img {
+  max-width: 80vw;
+  max-height: 30vw;
+}
+
+.image {
+  display: inline-block;
+  border: 0;
+  margin-left: auto;
+  margin-right: auto;
+  &:active {
+    border: 0;
+  }
+  &:hover {
+    border: 0;
+  }
+}

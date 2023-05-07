@@ -28,4 +28,14 @@ export class ImageService {
       }),
     );
   }
+
+  public getImage(id: string): Observable<Image> {
+    return this.http.get<Image>(
+      `/api/image/${encodeURIComponent(id)}`,
+    ).pipe(
+      map((image: Image) => {
+        return ToMoment(image);
+      }),
+    );
+  }
 }
