@@ -29,6 +29,25 @@ export class ImageService {
     );
   }
 
+  public getImageListWithTag(tag: string, count: number, after?: Image): Observable<Image[]> {
+    const params = new URLSearchParams({
+      tag,
+      count: String(count),
+    });
+    if (after !== undefined) {
+      params.append('after', after.id);
+    }
+    return this.http.get<Image[]>(
+      '/api/image/?' + params.toString(),
+    ).pipe(
+      map((imageList: Image[]) => {
+        return imageList.map(
+          ToMoment,
+        );
+      }),
+    );
+  }
+
   public getImage(id: string): Observable<Image> {
     return this.http.get<Image>(
       `/api/image/${encodeURIComponent(id)}`,

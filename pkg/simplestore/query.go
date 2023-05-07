@@ -54,6 +54,12 @@ func (c *Client) MustQuery(target any) *Query {
 	return q
 }
 
+func (q *Query) Where(path, op string, value interface{}) *Query {
+	newQ := *q
+	newQ.Query = q.Query.Where(path, op, value)
+	return &newQ
+}
+
 func (q *Query) OrderBy(path string, dir firestore.Direction) *Query {
 	newQ := *q
 	newQ.Query = q.Query.OrderBy(path, dir)

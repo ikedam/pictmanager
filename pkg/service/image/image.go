@@ -39,6 +39,33 @@ func (c *Controller) GetImageList(ctx context.Context, count int, after string) 
 	return imageList, nil
 }
 
+func (c *Controller) GetImageListWithTag(ctx context.Context, tag string, count int, after string) ([]*model.Image, error) {
+	client, err := simplestore.New(ctx)
+	if err != nil {
+		return nil, errors.Wrap(err, "failed to initialize firestore client")
+	}
+	var imageList []*model.Image
+	query := client.MustQuery(&imageList).
+		Where("TagList", "array-contains", tag).
+		OrderBy("PublishTime", firestore.Desc).
+		Limit(count)
+	if after == "" {
+		err = query.Do(ctx)
+	} else {
+		err = query.DoAfterByID(ctx, after)
+	}
+	if err != nil {
+		return nil, errors.Wrap(err, "failed to query Image")
+	}
+	for _, image := range imageList {
+		err := image.FillURL(c.config.GCSBaseURL())
+		if err != nil {
+			return nil, errors.Wrapf(err, "failed to fill URL for %v", image.ID)
+		}
+	}
+	return imageList, nil
+}
+
 func (c *Controller) GetImage(ctx context.Context, id string) (*model.Image, error) {
 	client, err := simplestore.New(ctx)
 	if err != nil {
@@ -73,6 +100,10 @@ func (c *Controller) PutImageWithUpdatingTag(ctx context.Context, image *model.I
 
 	newTagSet := currentTagSet.Difference(priorTagSet)
 	removeTagSet := priorTagSet.Difference(currentTagSet)
+
+	if newTagSet.Cardinality() > 0 || removeTagSet.Cardinality() > 0 {
+		image.LastManualTagTime = &now
+	}
 
 	err = client.Put(ctx, image)
 	if err != nil {

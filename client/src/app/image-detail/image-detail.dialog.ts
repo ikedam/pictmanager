@@ -19,7 +19,7 @@ export class ImageDialogComponent {
 
   @ViewChild('addingTagElement')
   set addingTagElement(e: ElementRef<HTMLInputElement>) {
-    if (e.nativeElement) {
+    if (e && e.nativeElement) {
       e.nativeElement.focus();
     }
   }

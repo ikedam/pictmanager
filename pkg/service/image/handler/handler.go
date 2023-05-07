@@ -18,6 +18,7 @@ func Route(ctx context.Context, config *config.Config, g *echo.Group) error {
 	}
 	g.GET("/", func(ec echo.Context) error {
 		request := struct {
+			Tag   string `query:"tag"`
 			Count int    `query:"count"`
 			After string `query:"after"`
 		}{
@@ -31,7 +32,12 @@ func Route(ctx context.Context, config *config.Config, g *echo.Group) error {
 			return rfc7807.BadRequest().WithDetailf("too many counts: %v", request.Count)
 		}
 		ctx := ec.Request().Context()
-		imageList, err := c.GetImageList(ctx, request.Count, request.After)
+		var imageList []*model.Image
+		if request.Tag == "" {
+			imageList, err = c.GetImageList(ctx, request.Count, request.After)
+		} else {
+			imageList, err = c.GetImageListWithTag(ctx, request.Tag, request.Count, request.After)
+		}
 		if err != nil {
 			return err
 		}

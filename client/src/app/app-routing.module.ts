@@ -15,6 +15,16 @@ const routes: Routes = [
       }
     ],
   },
+  {
+    path: 'tag/:tag',
+    component: ImageListComponent,
+    children: [
+      {
+        path: 'image/:id',
+        component: ImageDetailComponent,
+      }
+    ],
+  },
 ];
 
 @NgModule({
