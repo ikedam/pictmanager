@@ -24,6 +24,10 @@ type SimpleStoreLoader interface {
 	OnLoadFromFirestore() error
 }
 
+type SimpleStoreSaver interface {
+	OnSaveToFirestore() error
+}
+
 var projectEnvNameList = []string{
 	"CLOUDSDK_CORE_PROJECT",
 	"GOOGLE_CLOUD_PROJECT",
@@ -125,6 +129,13 @@ func (c *Client) Put(ctx context.Context, target any) error {
 	if isNew {
 		v := reflect.ValueOf(target).Elem()
 		v.FieldByName("ID").Set(reflect.ValueOf(doc.ID))
+	}
+	saver, ok := target.(SimpleStoreSaver)
+	if ok {
+		err := saver.OnSaveToFirestore()
+		if err != nil {
+			return errors.Wrap(err, "failed in OnSaveToFirestore")
+		}
 	}
 	_, err = doc.Set(ctx, target)
 	if err != nil && isNew {

@@ -60,3 +60,42 @@ func Route(ctx context.Context, config *config.Config, g *echo.Group) error {
 	})
 	return nil
 }
+
+func AdminRoute(ctx context.Context, config *config.Config, g *echo.Group) error {
+	c, err := image.New(ctx, config)
+	if err != nil {
+		return err
+	}
+	g.PUT("/:id", func(ec echo.Context) error {
+		var id string
+		err := echo.PathParamsBinder(ec).String("id", &id).BindError()
+		if err != nil {
+			return rfc7807.BadRequest().WithError(err)
+		}
+		ctx := ec.Request().Context()
+		image, err := c.GetImage(ctx, id)
+		if err != nil {
+			return err
+		}
+		if image == nil {
+			return rfc7807.NotFound()
+		}
+		priorTagList := image.TagList
+
+		newImage := *image
+		err = ec.Bind(&newImage)
+		if err != nil {
+			return rfc7807.BadRequest().WithError(err)
+		}
+		newImage.ID = image.ID
+		newImage.CreateTime = image.CreateTime
+
+		err = c.PutImageWithUpdatingTag(ctx, &newImage, priorTagList)
+		if err != nil {
+			return err
+		}
+
+		return ec.JSON(http.StatusOK, newImage)
+	})
+	return nil
+}

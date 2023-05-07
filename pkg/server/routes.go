@@ -26,5 +26,9 @@ func Route(ctx context.Context, config *config.Config, e *echo.Echo) error {
 	if err != nil {
 		return errors.Wrap(err, "error in building /admin/login")
 	}
+	err = image.AdminRoute(ctx, config, admin.Group("/image"))
+	if err != nil {
+		return errors.Wrap(err, "error in building /admin/image")
+	}
 	return nil
 }

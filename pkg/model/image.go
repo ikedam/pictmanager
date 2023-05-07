@@ -42,6 +42,17 @@ func (image *Image) OnLoadFromFirestore() error {
 	return nil
 }
 
+func (image *Image) OnSaveToFirestore() error {
+	image.ItemMask = 0
+	if image.WithIkedam {
+		image.ItemMask |= ImageItemIkedam
+	}
+	if image.WithMinidam {
+		image.ItemMask |= ImageItemMinidam
+	}
+	return nil
+}
+
 func (image *Image) FillURL(baseURL string) error {
 	imageURL, err := url.JoinPath(baseURL, image.ID)
 	if err != nil {

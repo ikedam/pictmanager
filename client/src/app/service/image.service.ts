@@ -38,4 +38,15 @@ export class ImageService {
       }),
     );
   }
+
+  public putImage(image: Image): Observable<Image> {
+    return this.http.put<Image>(
+      `/api/admin/image/${encodeURIComponent(image.id)}`,
+      image,
+    ).pipe(
+      map((image: Image) => {
+        return ToMoment(image);
+      }),
+    );
+  }
 }
