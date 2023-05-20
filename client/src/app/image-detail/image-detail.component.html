@@ -1,0 +1,8 @@
+<app-image-detail-content [image]="image" [imageEditor]="imageEditor" />
+<div *ngIf="!imageEditor.edit">
+  <button mat-button [disabled]="!session?.login" (click)="onEditStart()">編集</button>
+</div>
+<div *ngIf="imageEditor.edit">
+  <button mat-button (click)="onEditSave()">保存</button>
+  <button mat-button (click)="onEditCancel()">キャンセル</button>
+</div>

@@ -8,22 +8,14 @@ const routes: Routes = [
   {
     path: '',
     component: ImageListComponent,
-    children: [
-      {
-        path: 'image/:id',
-        component: ImageDetailComponent,
-      }
-    ],
   },
   {
     path: 'tag/:tag',
     component: ImageListComponent,
-    children: [
-      {
-        path: 'image/:id',
-        component: ImageDetailComponent,
-      }
-    ],
+  },
+  {
+    path: 'image/:id',
+    component: ImageDetailComponent,
   },
 ];
 
