@@ -23,3 +23,16 @@ resource "google_firestore_index" "Image-ItemMask-PublishTime" {
     order      = "DESCENDING"
   }
 }
+
+resource "google_firestore_index" "Tag-NormalizedTo-Count" {
+  collection = "Tag"
+
+  fields {
+    field_path = "NormalizedTo"
+    order      = "ASCENDING"
+  }
+  fields {
+    field_path = "Count"
+    order      = "DESCENDING"
+  }
+}
