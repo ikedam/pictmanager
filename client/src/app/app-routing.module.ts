@@ -3,6 +3,7 @@ import { RouterModule, Routes } from '@angular/router';
 
 import { ImageListComponent } from './image-list/image-list.component';
 import { ImageDetailComponent } from './image-detail/image-detail.component';
+import { TagListComponent } from './tag-list/tag-list.component';
 
 const routes: Routes = [
   {
@@ -10,12 +11,16 @@ const routes: Routes = [
     component: ImageListComponent,
   },
   {
-    path: 'tag/:tag',
-    component: ImageListComponent,
-  },
-  {
     path: 'image/:id',
     component: ImageDetailComponent,
+  },
+  {
+    path: 'tag',
+    component: TagListComponent,
+  },
+  {
+    path: 'tag/:tag',
+    component: ImageListComponent,
   },
 ];
 

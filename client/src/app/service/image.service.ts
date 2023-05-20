@@ -3,6 +3,7 @@ import { Injectable } from '@angular/core';
 import { Observable, map } from 'rxjs';
 
 import { Image } from 'src/app/model/image';
+import { Tag } from 'src/app/model/tag';
 import { ToMoment } from 'src/app/util/time';
 
 @Injectable({
@@ -67,5 +68,9 @@ export class ImageService {
         return ToMoment(image);
       }),
     );
+  }
+
+  public getTagList(): Observable<Tag[]> {
+    return this.http.get<Tag[]>('/api/tag/');
   }
 }

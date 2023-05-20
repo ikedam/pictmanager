@@ -7,6 +7,7 @@ import (
 	image "github.com/ikedam/pictmanager/pkg/service/image/handler"
 	login "github.com/ikedam/pictmanager/pkg/service/login/handler"
 	session "github.com/ikedam/pictmanager/pkg/service/session/handler"
+	tag "github.com/ikedam/pictmanager/pkg/service/tag/handler"
 	"github.com/labstack/echo/v4"
 	"github.com/pkg/errors"
 )
@@ -16,6 +17,10 @@ func Route(ctx context.Context, config *config.Config, e *echo.Echo) error {
 	err := image.Route(ctx, config, api.Group("/image"))
 	if err != nil {
 		return errors.Wrap(err, "error in building /image")
+	}
+	err = tag.Route(ctx, config, api.Group("/tag"))
+	if err != nil {
+		return errors.Wrap(err, "error in building /tag")
 	}
 	admin := api.Group("/admin")
 	err = session.AdminRoute(ctx, config, admin.Group("/session"))

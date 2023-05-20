@@ -1,0 +1,5 @@
+<mat-chip-set>
+  <mat-chip *ngFor="let tag of tagList">
+    <a [routerLink]="['/tag', tag.id]">{{tag.id}} ({{tag.count}})</a>
+  </mat-chip>
+</mat-chip-set>

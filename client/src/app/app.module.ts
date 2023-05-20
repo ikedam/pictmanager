@@ -20,6 +20,7 @@ import { ImageDetailContentComponent } from './image-detail/image-detail.content
 import { ImageDetailDialogComponent } from './image-detail/image-detail.dialog';
 import { MatDialogModule } from '@angular/material/dialog';
 import { FormsModule } from '@angular/forms';
+import { TagListComponent } from './tag-list/tag-list.component';
 
 @NgModule({
   declarations: [
@@ -28,6 +29,7 @@ import { FormsModule } from '@angular/forms';
     ImageDetailComponent,
     ImageDetailContentComponent,
     ImageDetailDialogComponent,
+    TagListComponent,
   ],
   imports: [
     BrowserModule,

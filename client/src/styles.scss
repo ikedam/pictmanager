@@ -2,3 +2,20 @@
 
 html, body { height: 100%; }
 body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+
+mat-chip {
+  margin: 0.2em;
+  a {
+    color: inherit;
+    text-decoration: inherit;
+    &:hover {
+      color: inherit;
+    }
+    &:active {
+      color: inherit;
+    }
+    &:visited {
+      color: inherit;
+    }
+  }
+}

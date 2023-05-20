@@ -28,23 +28,6 @@ mat-chip-set {
   margin-left: 0.5em;
 }
 
-mat-chip {
-  margin: 0.2em;
-  a {
-    color: inherit;
-    text-decoration: inherit;
-    &:hover {
-      color: inherit;
-    }
-    &:active {
-      color: inherit;
-    }
-    &:visited {
-      color: inherit;
-    }
-  }
-}
-
 mat-form-field {
   width: 100%;
 }
