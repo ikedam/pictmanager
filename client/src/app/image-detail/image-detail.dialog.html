@@ -16,12 +16,13 @@
     <mat-checkbox [(ngModel)]="editImage.withMinidam">ミニダム</mat-checkbox>
     <mat-chip-set>
       <mat-chip *ngFor="let tag of editImage.tagList"
-        [color]="image.tagList.includes(tag)?undefined:'accent'">
+        [highlighted]="!image.tagList.includes(tag)"
+        color="accent">
         {{tag}}
-        <button mat-icon-button (click)="onDeleteTag(tag)"><mat-icon>delete</mat-icon></button>
+        <button matButton matChipTrailingIcon (click)="onDeleteTag(tag)"><mat-icon>delete</mat-icon></button>
       </mat-chip>
       <mat-chip *ngIf="addingTag !== undefined">
-        <input [(ngModel)]="addingTag" #addingTagElement (blur)="onAddingTagBlur()">
+        <input [(ngModel)]="addingTag" #addingTagElement (change)="onAddingTagChange()">
       </mat-chip>
     </mat-chip-set>
     <button mat-icon-button (click)="onAddTag()"><mat-icon>add_circle_outline</mat-icon></button>

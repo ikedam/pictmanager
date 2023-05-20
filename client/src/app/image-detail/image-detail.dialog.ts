@@ -65,7 +65,7 @@ export class ImageDialogComponent {
     this.addingTag = "";
   }
 
-  onAddingTagBlur(): void {
+  onAddingTagChange(): void {
     if (
       this.addingTag === undefined
       || this.addingTag === ""

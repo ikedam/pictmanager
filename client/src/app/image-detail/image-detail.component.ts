@@ -1,5 +1,5 @@
 import { OnInit, Component, OnDestroy } from '@angular/core';
-import { MatDialog } from '@angular/material/dialog';
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 
@@ -13,6 +13,7 @@ import { ImageDialogComponent } from './image-detail.dialog';
 })
 export class ImageDetailComponent implements OnInit, OnDestroy {
   private subscription = new Subscription();
+  private dialogRef?: MatDialogRef<ImageDialogComponent>;
 
   constructor(
     private dialog: MatDialog,
@@ -23,12 +24,12 @@ export class ImageDetailComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.imageService.getImage(this.route.snapshot.paramMap.get('id') as string).subscribe(image => {
-      const dialogRef = this.dialog.open(
+      this.dialogRef = this.dialog.open(
         ImageDialogComponent, {
         data: image,
       });
   
-      this.subscription.add(dialogRef.afterClosed().subscribe(() => {
+      this.subscription.add(this.dialogRef.afterClosed().subscribe(() => {
         this.router.navigate(['../..'], { relativeTo: this.route, });
       }));
     });
@@ -36,5 +37,8 @@ export class ImageDetailComponent implements OnInit, OnDestroy {
 
   ngOnDestroy() {
     this.subscription.unsubscribe();
+    if (this.dialogRef) {
+      this.dialogRef.close();
+    }
   }
 }

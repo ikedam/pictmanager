@@ -24,12 +24,31 @@
   align-items: center;
 }
 
-mat-chip {
-  margin: 0.2em;
-  display: flex;
-  align-items: center;
+mat-chip-set {
+  margin-left: 0.5em;
 }
 
-.mdc-checkbox {
+mat-chip {
+  margin: 0.2em;
+  a {
+    color: inherit;
+    text-decoration: inherit;
+    &:hover {
+      color: inherit;
+    }
+    &:active {
+      color: inherit;
+    }
+    &:visited {
+      color: inherit;
+    }
+  }
+}
+
+mat-form-field {
+  width: 100%;
+}
+
+:host ::ng-deep .mdc-checkbox {
   padding-right: 0;
 }

@@ -1,3 +1,8 @@
 .toolbar-spacer {
-    flex: 1 1 auto;
+  flex: 1 1 auto;
+}
+
+// Material のスタイルでリンクにしたいがフォントサイズを変えてほしくない。
+:host ::ng-deep mat-toolbar .mdc-button {
+  font-size: inherit;
 }
