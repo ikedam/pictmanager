@@ -1,6 +1,6 @@
 <mat-card><mat-card-content>
 <div style="text-align: right;">
-  <a mat-button routerLink="/image/{{image.id}}" target="_blank">
+  <a mat-button [routerLink]="['/image', image.id]" target="_blank">
     <mat-icon>open_in_new</mat-icon>
     別タブで開く
   </a>
@@ -9,11 +9,11 @@
   <app-image-detail-content [image]="image" [imageEditor]="imageEditor" />
 </div>
 <div mat-dialog-actions *ngIf="!imageEditor.edit">
-  <button mat-button mat-dialog-close (click)="onClose()">閉じる</button>
-  <button mat-button [disabled]="!session?.login" (click)="onEditStart()">編集</button>
+  <button mat-stroked-button mat-dialog-close (click)="onClose()">閉じる</button>
+  <button mat-stroked-button [disabled]="!session?.login" (click)="onEditStart()">編集</button>
 </div>
 <div mat-dialog-actions *ngIf="imageEditor.edit">
-  <button mat-button (click)="onEditSave()">保存</button>
-  <button mat-button (click)="onEditCancel()">キャンセル</button>
+  <button mat-stroked-button color="primary" (click)="onEditSave()">保存</button>
+  <button mat-stroked-button (click)="onEditCancel()">キャンセル</button>
 </div>
 </mat-card-content></mat-card>

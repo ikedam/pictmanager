@@ -112,7 +112,7 @@ export class ImageListComponent implements OnInit, OnDestroy {
   }
 
   getUrlForImage(image: Image) {
-    return this.router.createUrlTree([`./image/${image.id}`])
+    return this.router.createUrlTree(['image', image.id])
   }
 
   onClickImage(image: Image) {

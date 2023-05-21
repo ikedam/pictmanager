@@ -14,9 +14,12 @@
     }
     img {
       max-width: 80vw;
-      max-height: 30vw;
+      max-height: 80vw;
     }
   }
+}
+.editing .image-container .image img {
+  max-height: 30vw;
 }
 
 .tags {
@@ -34,4 +37,11 @@ mat-form-field {
 
 :host ::ng-deep .mdc-checkbox {
   padding-right: 0;
+}
+
+.add-tag {
+  margin-left: 0.5em;
+  border: none;
+  border-bottom: 1px solid #666;
+  outline: none;
 }

@@ -1,63 +1,69 @@
-<div class="image-container">
-  <a class="image" href="{{image.imageURL}}" target="_blank"><img src="{{image.imageURL}}" alt="{{image.id}}" /></a>
-</div>
-<div class="tags" *ngIf="!imageEditor.edit">
-  <mat-chip-set>
-    <mat-chip *ngIf="image.withIkedam && !image.withMinidam">イケダム</mat-chip>
-    <mat-chip *ngIf="image.withMinidam && !image.withIkedam">ミニダム</mat-chip>
-    <mat-chip *ngIf="image.withIkedam && image.withMinidam">イケダム&ミニダム</mat-chip>
-    <mat-chip *ngFor="let tag of image.tagList"><a [routerLink]="['tag', tag]">{{tag}}</a></mat-chip>
-  </mat-chip-set>
-</div>
-<div class="tags" *ngIf="imageEditor.editImage !== undefined">
-  <mat-checkbox [(ngModel)]="imageEditor.editImage.withIkedam">イケダム</mat-checkbox>
-  <mat-checkbox [(ngModel)]="imageEditor.editImage.withMinidam">ミニダム</mat-checkbox>
-  <mat-chip-set>
-    <mat-chip *ngFor="let tag of imageEditor.editImage.tagList"
-      [highlighted]="!image.tagList.includes(tag)"
-      color="accent">
-      {{tag}}
-      <button matButton matChipTrailingIcon (click)="onDeleteTag(tag)"><mat-icon>delete</mat-icon></button>
-    </mat-chip>
-    <mat-chip *ngIf="imageEditor.addingTag !== undefined">
-      <input [(ngModel)]="imageEditor.addingTag" #addingTagElement (change)="onAddingTagChange()">
-    </mat-chip>
-  </mat-chip-set>
-  <button mat-icon-button (click)="onAddTag()"><mat-icon>add_circle_outline</mat-icon></button>
-</div>
-<dl>
-  <dt>説明</dt>
-    <dd *ngIf="!imageEditor.edit">{{image.description}}</dd>
-    <dd *ngIf="imageEditor.editImage !== undefined">
-      <mat-form-field>
-        <textarea matInput [(ngModel)]="imageEditor.editImage.description"></textarea>
-      </mat-form-field>
-    </dd>
-  <dt>制作メモ</dt>
-    <dd *ngIf="!imageEditor.edit">{{image.makingNote}}</dd>
-    <dd *ngIf="imageEditor.editImage !== undefined">
-      <mat-form-field>
-        <textarea matInput [(ngModel)]="imageEditor.editImage.makingNote"></textarea>
-      </mat-form-field>
-    </dd>
-  <ng-container *ngIf="image.twitterURL !== ''">
-    <dt>Twitter</dt>
-      <dd *ngIf="!imageEditor.edit"><a href="{{image.twitterURL}}" target="_blank">{{image.tweetComment?image.tweetComment:'Twitter'}}</a></dd>
+<div [class.editing]="imageEditor.edit">
+  <div class="image-container">
+    <a class="image" href="{{image.imageURL}}" target="_blank"><img src="{{image.imageURL}}" alt="{{image.id}}" /></a>
+  </div>
+  <div class="tags" *ngIf="!imageEditor.edit">
+    <mat-chip-set>
+      <mat-chip *ngIf="image.withIkedam && !image.withMinidam">イケダム</mat-chip>
+      <mat-chip *ngIf="image.withMinidam && !image.withIkedam">ミニダム</mat-chip>
+      <mat-chip *ngIf="image.withIkedam && image.withMinidam">イケダム&ミニダム</mat-chip>
+      <mat-chip *ngFor="let tag of image.tagList"><a [routerLink]="['/tag', tag]">{{tag}}</a></mat-chip>
+    </mat-chip-set>
+  </div>
+  <div class="tags" *ngIf="imageEditor.editImage !== undefined">
+    <mat-checkbox [(ngModel)]="imageEditor.editImage.withIkedam">イケダム</mat-checkbox>
+    <mat-checkbox [(ngModel)]="imageEditor.editImage.withMinidam">ミニダム</mat-checkbox>
+    <mat-chip-set>
+      <mat-chip *ngFor="let tag of imageEditor.editImage.tagList"
+        [highlighted]="!image.tagList.includes(tag)"
+        color="accent">
+        {{tag}}
+        <button matButton matChipTrailingIcon (click)="onDeleteTag(tag)"><mat-icon>delete</mat-icon></button>
+      </mat-chip>
+      <input
+        class="add-tag"
+        *ngIf="imageEditor.addingTag !== undefined"
+        [(ngModel)]="imageEditor.addingTag"
+        #addingTagElement
+        (blur)="onAddingTagChange()"
+        (change)="onAddingTagChange()">
+    </mat-chip-set>
+    <button mat-icon-button (click)="onAddTag()"><mat-icon>add_circle_outline</mat-icon></button>
+  </div>
+  <dl>
+    <dt>説明</dt>
+      <dd *ngIf="!imageEditor.edit">{{image.description}}</dd>
       <dd *ngIf="imageEditor.editImage !== undefined">
         <mat-form-field>
-          <mat-label>URL</mat-label>
-          <input matInput [(ngModel)]="imageEditor.editImage.twitterURL">
+          <textarea matInput [(ngModel)]="imageEditor.editImage.description"></textarea>
         </mat-form-field>
       </dd>
+    <dt>制作メモ</dt>
+      <dd *ngIf="!imageEditor.edit">{{image.makingNote}}</dd>
       <dd *ngIf="imageEditor.editImage !== undefined">
         <mat-form-field>
-          <mat-label>コメント</mat-label>
-          <input matInput [(ngModel)]="imageEditor.editImage.tweetComment">
+          <textarea matInput [(ngModel)]="imageEditor.editImage.makingNote"></textarea>
         </mat-form-field>
       </dd>
-  </ng-container>
-<dt>作成日</dt>
-  <dd>{{image.publishTime.toISOString()}}</dd>
-<dt>更新日</dt>
-  <dd>{{image.updateTime.toISOString()}}</dd>
-</dl>
+    <ng-container *ngIf="image.twitterURL !== ''">
+      <dt>Twitter</dt>
+        <dd *ngIf="!imageEditor.edit"><a href="{{image.twitterURL}}" target="_blank">{{image.tweetComment?image.tweetComment:'Twitter'}}</a></dd>
+        <dd *ngIf="imageEditor.editImage !== undefined">
+          <mat-form-field>
+            <mat-label>URL</mat-label>
+            <input matInput [(ngModel)]="imageEditor.editImage.twitterURL">
+          </mat-form-field>
+        </dd>
+        <dd *ngIf="imageEditor.editImage !== undefined">
+          <mat-form-field>
+            <mat-label>コメント</mat-label>
+            <input matInput [(ngModel)]="imageEditor.editImage.tweetComment">
+          </mat-form-field>
+        </dd>
+    </ng-container>
+  <dt>作成日</dt>
+    <dd>{{image.publishTime.toISOString()}}</dd>
+  <dt>更新日</dt>
+    <dd>{{image.updateTime.toISOString()}}</dd>
+  </dl>
+</div>
