@@ -86,6 +86,12 @@ func AdminRoute(ctx context.Context, config *config.Config, g *echo.Group) error
 		if err != nil {
 			return rfc7807.BadRequest().WithError(err)
 		}
+		var preserveTagTime bool
+		err = echo.QueryParamsBinder(ec).Bool("preserveTagTime", &preserveTagTime).BindError()
+		if err != nil {
+			return rfc7807.BadRequest().WithError(err)
+		}
+
 		ctx := ec.Request().Context()
 		image, err := c.GetImage(ctx, id)
 		if err != nil {
@@ -104,12 +110,23 @@ func AdminRoute(ctx context.Context, config *config.Config, g *echo.Group) error
 		newImage.ID = image.ID
 		newImage.CreateTime = image.CreateTime
 
-		err = c.PutImageWithUpdatingTag(ctx, &newImage, priorTagList)
+		err = c.PutImageWithUpdatingTag(ctx, &newImage, priorTagList, preserveTagTime)
 		if err != nil {
 			return err
 		}
 
 		return ec.JSON(http.StatusOK, newImage)
+	})
+	g.GET("/@tagging", func(ec echo.Context) error {
+		ctx := ec.Request().Context()
+		image, err := c.GetImageForTagging(ctx)
+		if err != nil {
+			return err
+		}
+		if image.TagList == nil {
+			image.TagList = []string{}
+		}
+		return ec.JSON(http.StatusOK, image)
 	})
 	return nil
 }

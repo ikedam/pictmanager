@@ -7,6 +7,7 @@ import (
 	"cloud.google.com/go/firestore"
 	mapset "github.com/deckarep/golang-set/v2"
 	"github.com/ikedam/pictmanager/pkg/model"
+	"github.com/ikedam/pictmanager/pkg/rfc7807"
 	"github.com/ikedam/pictmanager/pkg/simplestore"
 	"github.com/ikedam/pictmanager/pkg/util"
 	"github.com/pkg/errors"
@@ -108,7 +109,7 @@ func (c *Controller) CreateImage(ctx context.Context, image *model.Image) (*mode
 	return image, nil
 }
 
-func (c *Controller) PutImageWithUpdatingTag(ctx context.Context, image *model.Image, priorTagList []string) error {
+func (c *Controller) PutImageWithUpdatingTag(ctx context.Context, image *model.Image, priorTagList []string, preserveTagTime bool) error {
 	client, err := simplestore.New(ctx)
 	if err != nil {
 		return errors.Wrap(err, "failed to initialize firestore client")
@@ -124,7 +125,7 @@ func (c *Controller) PutImageWithUpdatingTag(ctx context.Context, image *model.I
 	newTagSet := currentTagSet.Difference(priorTagSet)
 	removeTagSet := priorTagSet.Difference(currentTagSet)
 
-	if newTagSet.Cardinality() > 0 || removeTagSet.Cardinality() > 0 {
+	if !preserveTagTime && (newTagSet.Cardinality() > 0 || removeTagSet.Cardinality() > 0) {
 		image.LastManualTagTime = &now
 	}
 
@@ -166,4 +167,92 @@ func (c *Controller) PutImageWithUpdatingTag(ctx context.Context, image *model.I
 		client.Put(ctx, tagEntry)
 	}
 	return nil
+}
+
+func (c *Controller) GetImageForTagging(ctx context.Context) (*model.Image, error) {
+	image, err := c.getImageForTaggingImpl(ctx)
+	if err != nil {
+		return nil, err
+	}
+	if image == nil {
+		return nil, rfc7807.NotFound()
+	}
+	err = image.FillURL(c.config.GCSBaseURL())
+	if err != nil {
+		return nil, err
+	}
+	return image, nil
+}
+
+const pickRetry = 10
+
+func (c *Controller) getImageForTaggingImpl(ctx context.Context) (*model.Image, error) {
+	for count := 0; count < pickRetry; count++ {
+		image, err := c.getImageNotTaggedRandomly(ctx)
+		if err != nil {
+			return nil, err
+		}
+		if image != nil {
+			return image, nil
+		}
+	}
+
+	// Then, try with already tagged image
+	for count := 0; count < pickRetry; count++ {
+		image, err := c.getImageTaggedRandomly(ctx)
+		if err != nil {
+			return nil, err
+		}
+		if image != nil {
+			return image, nil
+		}
+	}
+
+	return nil, nil
+}
+
+func (c *Controller) getImageNotTaggedRandomly(ctx context.Context) (*model.Image, error) {
+	client, err := simplestore.New(ctx)
+	if err != nil {
+		return nil, errors.Wrap(err, "failed to initialize firestore client")
+	}
+	var imageList []*model.Image
+	randomValue := GetRandomValue()
+	query := client.MustQuery(&imageList).
+		Where("Random", "==", randomValue).
+		Where("LastManualTagTime", "==", nil)
+	err = query.Do(ctx)
+	if err != nil {
+		return nil, errors.Wrap(err, "failed to query Image")
+	}
+	if len(imageList) <= 0 {
+		return nil, nil
+	}
+	return pickOneImage(imageList), nil
+}
+
+func (c *Controller) getImageTaggedRandomly(ctx context.Context) (*model.Image, error) {
+	client, err := simplestore.New(ctx)
+	if err != nil {
+		return nil, errors.Wrap(err, "failed to initialize firestore client")
+	}
+	var imageList []*model.Image
+	randomValue := GetRandomValue()
+	query := client.MustQuery(&imageList).
+		Where("Random", "==", randomValue).
+		OrderBy("LastManualTagTime", firestore.Asc).
+		Limit(10)
+	err = query.Do(ctx)
+	if err != nil {
+		return nil, errors.Wrap(err, "failed to query Image")
+	}
+	if len(imageList) <= 0 {
+		return nil, nil
+	}
+	return pickOneImage(imageList), nil
+}
+
+func pickOneImage(imageList []*model.Image) *model.Image {
+	idx := rand.Intn(len(imageList))
+	return imageList[idx]
 }

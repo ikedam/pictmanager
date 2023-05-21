@@ -1,0 +1,20 @@
+<div style="text-align: right;">
+  <a mat-button [routerLink]="['/image', image.id]" target="_blank">
+    <mat-icon>open_in_new</mat-icon>
+    別タブで開く
+  </a>
+</div>
+<div class="buttons">
+  <button mat-stroked-button color="primary" (click)="onEditSave()">保存</button>
+  <button mat-stroked-button color="primary" (click)="onEditSaveTemporary()">仮保存</button>
+  <button mat-stroked-button (click)="onEditCancel()">キャンセル(別の)</button>
+</div>
+<app-image-detail-content [image]="image" [imageEditor]="imageEditor" />
+<div class="buttons">
+  <button mat-stroked-button color="primary" (click)="onEditSave()">保存</button>
+  <button mat-stroked-button color="primary" (click)="onEditSaveTemporary()">仮保存</button>
+  <button mat-stroked-button (click)="onEditCancel()">キャンセル(別の)</button>
+</div>
+<div class="footnote">
+「仮保存」はタグを保存するけれど、後日またタグ付け候補に挙げてほしい場合に使用。
+</div>

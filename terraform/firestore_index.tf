@@ -24,6 +24,19 @@ resource "google_firestore_index" "Image-ItemMask-PublishTime" {
   }
 }
 
+resource "google_firestore_index" "Image-Random-LastManualTagTime" {
+  collection = "Image"
+
+  fields {
+    field_path = "Random"
+    order      = "ASCENDING"
+  }
+  fields {
+    field_path = "LastManualTagTime"
+    order      = "ASCENDING"
+  }
+}
+
 resource "google_firestore_index" "Tag-NormalizedTo-Count" {
   collection = "Tag"
 

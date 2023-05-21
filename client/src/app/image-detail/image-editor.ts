@@ -21,11 +21,11 @@ export class ImageEditor {
     this.editImage = undefined;
   }
 
-  onEditSave(imageService: ImageService): void {
+  onEditSave(imageService: ImageService, temporary?: boolean): void {
     if (this.editImage === undefined) {
       return;
     }
-    imageService.putImage(this.editImage).subscribe((image) => {
+    imageService.putImage(this.editImage, temporary).subscribe((image) => {
       for (const key of Object.keys(image)) {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         (this.image as any)[key] = (image as any)[key];

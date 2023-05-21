@@ -59,9 +59,26 @@ export class ImageService {
     );
   }
 
-  public putImage(image: Image): Observable<Image> {
+  public getImageForTagging(): Observable<Image> {
+    return this.http.get<Image>(
+      `/api/admin/image/@tagging`,
+    ).pipe(
+      map((image: Image) => {
+        return ToMoment(image);
+      }),
+    );
+  }
+
+  public putImage(image: Image, temporary?: boolean|undefined): Observable<Image> {
+    let url = `/api/admin/image/${encodeURIComponent(image.id)}`;
+    if (temporary??false) {
+      const params = new URLSearchParams({
+        preserveTagTime: String(true),
+      });
+      url = url + '?' + params.toString();
+    }
     return this.http.put<Image>(
-      `/api/admin/image/${encodeURIComponent(image.id)}`,
+      url,
       image,
     ).pipe(
       map((image: Image) => {
