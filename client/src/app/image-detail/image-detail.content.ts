@@ -9,6 +9,7 @@ import { ImageEditor } from './image-editor';
   styleUrls: ['./image-detail.content.scss'],
 })
 export class ImageDetailContentComponent {
+  @Input() imageClass = '';
   @Input() image: Image = DefaultImage;
   @Input() imageEditor: ImageEditor = new ImageEditor(this.image);
 

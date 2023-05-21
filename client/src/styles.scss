@@ -19,3 +19,13 @@ mat-chip {
     }
   }
 }
+
+dt {
+  text-decoration: underline;
+}
+
+@media (max-width: 767px) {
+  dd {
+    margin-left: 0;
+  }
+}

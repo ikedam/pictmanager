@@ -6,7 +6,7 @@
   </a>
 </div>
 <div mat-dialog-content>
-  <app-image-detail-content [image]="image" [imageEditor]="imageEditor" />
+  <app-image-detail-content imageClass="dialog" [image]="image" [imageEditor]="imageEditor" />
 </div>
 <div mat-dialog-actions *ngIf="!imageEditor.edit">
   <button mat-stroked-button mat-dialog-close (click)="onClose()">閉じる</button>

@@ -44,6 +44,11 @@ func Route(ctx context.Context, config *config.Config, g *echo.Group) error {
 		if imageList == nil {
 			imageList = []*model.Image{}
 		}
+		for _, image := range imageList {
+			if image.TagList == nil {
+				image.TagList = []string{}
+			}
+		}
 		return ec.JSON(http.StatusOK, imageList)
 	})
 	g.GET("/:id", func(ec echo.Context) error {
@@ -61,6 +66,9 @@ func Route(ctx context.Context, config *config.Config, g *echo.Group) error {
 		}
 		if image == nil {
 			return rfc7807.NotFound()
+		}
+		if image.TagList == nil {
+			image.TagList = []string{}
 		}
 		return ec.JSON(http.StatusOK, image)
 	})

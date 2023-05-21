@@ -33,14 +33,17 @@ export class ImageDetailDialogComponent {
   }
 
   onEditStart(): void {
+    this.dialogRef.disableClose = true;
     this.imageEditor.onEditStart();
   }
 
   onEditCancel(): void {
     this.imageEditor.onEditCancel();
+    this.dialogRef.disableClose = false;
   }
 
   onEditSave(): void {
     this.imageEditor.onEditSave(this.imageService);
+    this.dialogRef.disableClose = false;
   }
 }
