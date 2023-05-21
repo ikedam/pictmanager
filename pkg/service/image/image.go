@@ -2,6 +2,7 @@ package image
 
 import (
 	"context"
+	"math/rand"
 
 	"cloud.google.com/go/firestore"
 	mapset "github.com/deckarep/golang-set/v2"
@@ -12,6 +13,12 @@ import (
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 )
+
+const RandomRange = 100
+
+func GetRandomValue() int {
+	return rand.Intn(RandomRange) + 1
+}
 
 func (c *Controller) GetImageList(ctx context.Context, count int, after string) ([]*model.Image, error) {
 	client, err := simplestore.New(ctx)
@@ -81,6 +88,22 @@ func (c *Controller) GetImage(ctx context.Context, id string) (*model.Image, err
 	err = image.FillURL(c.config.GCSBaseURL())
 	if err != nil {
 		return nil, errors.Wrapf(err, "failed to fill URL for %v", image.ID)
+	}
+	return image, nil
+}
+
+func (c *Controller) CreateImage(ctx context.Context, image *model.Image) (*model.Image, error) {
+	client, err := simplestore.New(ctx)
+	if err != nil {
+		return nil, errors.Wrap(err, "failed to initialize firestore client")
+	}
+	now := util.GetCurrentTime()
+	image.CreateTime = now
+	image.UpdateTime = now
+	image.Random = GetRandomValue()
+	err = client.Put(ctx, image)
+	if err != nil {
+		return nil, errors.Wrapf(err, "failed to put Image %v", image.ID)
 	}
 	return image, nil
 }

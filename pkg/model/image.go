@@ -27,6 +27,7 @@ type Image struct {
 	TwitterURL         string        `json:"twitterURL"`
 	TweetComment       string        `json:"tweetComment"`
 	PublishTime        time.Time     `json:"publishTime"`
+	Random             int           `json:"-"`
 	LastManualTagTime  *time.Time    `json:"lastManualTagTime,omitempty"`
 	LastMachineTagTime *time.Time    `json:"lastMachineTagTime,omitempty"`
 	CreateTime         time.Time     `json:"createTime"`

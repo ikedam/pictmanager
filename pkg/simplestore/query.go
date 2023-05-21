@@ -72,7 +72,7 @@ func (q *Query) Limit(n int) *Query {
 	return &newQ
 }
 
-func (q *Query) Do(ctx context.Context) error {
+func (q *Query) Iter(ctx context.Context, f func(any) error) error {
 	iter := q.Query.Documents(ctx)
 	defer iter.Stop()
 	for {
@@ -88,9 +88,19 @@ func (q *Query) Do(ctx context.Context) error {
 		if err != nil {
 			return errors.WithMessagef(ErrProgramming, "failed to serialize data to %v:  %+v", q.targetType.Name, doc.Data(), err)
 		}
-		q.targetList.Set(reflect.Append(q.targetList, v))
+		err = f(v.Interface())
+		if err != nil {
+			return errors.WithStack(err)
+		}
 	}
 	return nil
+}
+
+func (q *Query) Do(ctx context.Context) error {
+	return q.Iter(ctx, func(v any) error {
+		q.targetList.Set(reflect.Append(q.targetList, reflect.ValueOf(v)))
+		return nil
+	})
 }
 
 func (q *Query) DoAfterByID(ctx context.Context, id string) error {

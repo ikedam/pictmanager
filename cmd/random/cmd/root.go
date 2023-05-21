@@ -6,7 +6,7 @@ import (
 
 	"github.com/ikedam/pictmanager/pkg/config"
 	"github.com/ikedam/pictmanager/pkg/log"
-	"github.com/ikedam/pictmanager/pkg/uploader"
+	"github.com/ikedam/pictmanager/pkg/random"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 	"go.uber.org/zap"
@@ -14,9 +14,8 @@ import (
 
 var rootCmd = &cobra.Command{
 	SilenceUsage: true,
-	Use:          "uploader",
-	Short:        "uploader scans a directory and upload all files to pictmanager",
-	Args:         cobra.MatchAll(cobra.ExactArgs(1), cobra.OnlyValidArgs),
+	Use:          "random",
+	Short:        "random generates random values for images. All images will be updated.",
 	RunE: func(cmd *cobra.Command, args []string) error {
 		var cfg config.Config
 		err := viper.Unmarshal(&cfg)
@@ -28,11 +27,11 @@ var rootCmd = &cobra.Command{
 			os.Setenv("CLOUDSDK_CORE_PROJECT", project)
 		}
 		ctx := context.Background()
-		uploader, err := uploader.New(ctx, &cfg)
+		random, err := random.New(ctx, &cfg)
 		if err != nil {
 			return err
 		}
-		return uploader.Scan(ctx, args[0])
+		return random.Scan(ctx)
 	},
 }
 

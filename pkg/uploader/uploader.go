@@ -17,19 +17,20 @@ import (
 	"github.com/ikedam/pictmanager/pkg/config"
 	"github.com/ikedam/pictmanager/pkg/log"
 	"github.com/ikedam/pictmanager/pkg/model"
+	imageservice "github.com/ikedam/pictmanager/pkg/service/image"
 	"github.com/ikedam/pictmanager/pkg/simplestore"
-	"github.com/ikedam/pictmanager/pkg/util"
 	"github.com/pkg/errors"
 	"go.uber.org/zap"
 )
 
 type Uploader struct {
-	config        *config.Config
-	gcsBucketName string
-	gcsBasePath   string
+	config          *config.Config
+	gcsBucketName   string
+	gcsBasePath     string
+	imageController *imageservice.Controller
 }
 
-func New(config *config.Config) (*Uploader, error) {
+func New(ctx context.Context, config *config.Config) (*Uploader, error) {
 	gcsURL, err := url.Parse(config.GCS)
 	if err != nil {
 		return nil, errors.Wrapf(err, "failed to parse: %v", config.GCS)
@@ -39,10 +40,15 @@ func New(config *config.Config) (*Uploader, error) {
 	}
 	bucketName := gcsURL.Host
 	basePath := strings.TrimPrefix(gcsURL.Path, "/")
+	imageController, err := imageservice.New(ctx, config)
+	if err != nil {
+		return nil, errors.Wrap(err, "failed to initialize image service")
+	}
 	return &Uploader{
-		config:        config,
-		gcsBucketName: bucketName,
-		gcsBasePath:   basePath,
+		config:          config,
+		gcsBucketName:   bucketName,
+		gcsBasePath:     basePath,
+		imageController: imageController,
 	}, nil
 }
 
@@ -231,14 +237,11 @@ func (u *Uploader) upload(ctx context.Context, fsClient *simplestore.Client, buc
 		)
 	}
 
-	now := util.GetCurrentTime()
 	imageInfo = &model.Image{
 		ID:          filename,
 		PublishTime: stat.ModTime(),
-		CreateTime:  now,
-		UpdateTime:  now,
 	}
-	err = fsClient.Put(ctx, imageInfo)
+	_, err = u.imageController.CreateImage(ctx, imageInfo)
 	if err != nil {
 		return errors.Wrapf(err, "failed to put Image %v", filename)
 	}
