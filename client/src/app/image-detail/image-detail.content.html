@@ -20,13 +20,15 @@
         {{tag}}
         <button matButton matChipTrailingIcon (click)="onDeleteTag(tag)"><mat-icon>delete</mat-icon></button>
       </mat-chip>
-      <input
-        class="add-tag"
-        *ngIf="imageEditor.addingTag !== undefined"
-        [(ngModel)]="imageEditor.addingTag"
-        #addingTagElement
-        (blur)="onAddingTagChange()"
-        (change)="onAddingTagChange()">
+      <mat-form-field *ngIf="imageEditor.addingTag !== undefined">
+        <input
+          class="add-tag"
+          matInput
+          [(ngModel)]="imageEditor.addingTag"
+          #addingTagElement
+          (blur)="onAddingTagChange()"
+          (change)="onAddingTagChange()">
+      </mat-form-field>
     </mat-chip-set>
     <button mat-icon-button (click)="onAddTag()"><mat-icon>add_circle_outline</mat-icon></button>
   </div>
@@ -35,17 +37,17 @@
       <dd *ngIf="!imageEditor.edit">{{image.description}}</dd>
       <dd *ngIf="imageEditor.editImage !== undefined">
         <mat-form-field>
-          <textarea matInput [(ngModel)]="imageEditor.editImage.description"></textarea>
+          <textarea matInput rows="4" [(ngModel)]="imageEditor.editImage.description"></textarea>
         </mat-form-field>
       </dd>
     <dt>制作メモ</dt>
       <dd *ngIf="!imageEditor.edit">{{image.makingNote}}</dd>
       <dd *ngIf="imageEditor.editImage !== undefined">
         <mat-form-field>
-          <textarea matInput [(ngModel)]="imageEditor.editImage.makingNote"></textarea>
+          <textarea matInput rows="4" [(ngModel)]="imageEditor.editImage.makingNote"></textarea>
         </mat-form-field>
       </dd>
-    <ng-container *ngIf="image.twitterURL !== ''">
+    <ng-container *ngIf="!imageEditor.edit && image.twitterURL !== ''">
       <dt>Twitter</dt>
         <dd *ngIf="!imageEditor.edit"><a href="{{image.twitterURL}}" target="_blank">{{image.tweetComment?image.tweetComment:'Twitter'}}</a></dd>
         <dd *ngIf="imageEditor.editImage !== undefined">
