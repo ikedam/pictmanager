@@ -125,7 +125,7 @@ services:
     image: hashicorp/terraform:1.4.6
     volumes:
       - ./terraform:/workspace
-      - ${CLOUDSDK_CONFIG:-${APPDATA:-${HOME}/.config}/gcloud}:/root/.config/gcloud
+      - ${CLOUDSDK_CONFIG:-${APPDATA:-${HOME:-}/.config}/gcloud}:/root/.config/gcloud
     working_dir: /workspace
   deploy:
     profiles: [dummy]
@@ -134,7 +134,7 @@ services:
     volumes:
       - .:/workspace
       - /workspace/client/node_modules
-      - ${CLOUDSDK_CONFIG:-${APPDATA:-${HOME}/.config}/gcloud}:/root/.config/gcloud
+      - ${CLOUDSDK_CONFIG:-${APPDATA:-${HOME:-}/.config}/gcloud}:/root/.config/gcloud
     environment:
       - CLOUDSDK_CORE_PROJECT=ikedam
     working_dir: /workspace

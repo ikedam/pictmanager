@@ -6,6 +6,8 @@ terraform {
   }
 }
 
+
+
 provider "google" {
   project = "ikedam"
   region  = "us-central1"
@@ -15,8 +17,19 @@ provider "google" {
 data "google_project" "project" {
 }
 
+data "google_client_config" "client" {
+}
+
+locals {
+  location = split("-", data.google_client_config.client.region)[0]
+}
+
 resource "google_app_engine_application" "app" {
-  location_id   = "us-central"
+  location_id = substr(
+    data.google_client_config.client.region,
+    0,
+    length(data.google_client_config.client.region) - 1,
+  )
   database_type = "CLOUD_FIRESTORE"
 }
 
@@ -40,7 +53,7 @@ resource "google_project_iam_member" "project" {
 
 resource "google_storage_bucket" "picts" {
   name     = "ikadam-picts"
-  location = "us-central1"
+  location = data.google_client_config.client.region
 }
 
 resource "google_storage_bucket_iam_member" "picts-appengine" {
@@ -53,4 +66,18 @@ resource "google_storage_bucket_iam_member" "picts-public" {
   bucket = google_storage_bucket.picts.name
   role   = "roles/storage.legacyObjectReader"
   member = "allUsers"
+}
+
+resource "google_storage_bucket" "registry" {
+  name     = "${local.location}.artifacts.${data.google_project.project.project_id}.appspot.com"
+  location = upper(local.location)
+
+  lifecycle_rule {
+    condition {
+      age = 3
+    }
+    action {
+      type = "Delete"
+    }
+  }
 }
