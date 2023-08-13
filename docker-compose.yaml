@@ -114,24 +114,27 @@ services:
     working_dir: /app
     depends_on:
       - firestore
+      - storage
     command:
       - go
       - run
       - ./cmd/random
   terraform:
     profiles: [dummy]
+    network_mode: bridge
     image: hashicorp/terraform:1.4.6
     volumes:
       - ./terraform:/workspace
-      - ${CLOUDSDK_CONFIG:-}:/root/.config/gcloud
+      - ${CLOUDSDK_CONFIG:-${APPDATA:-${HOME}/.config}/gcloud}:/root/.config/gcloud
     working_dir: /workspace
   deploy:
     profiles: [dummy]
+    network_mode: bridge
     image: gcr.io/google.com/cloudsdktool/google-cloud-cli:429.0.0-alpine
     volumes:
       - .:/workspace
       - /workspace/client/node_modules
-      - ${CLOUDSDK_CONFIG:-}:/root/.config/gcloud
+      - ${CLOUDSDK_CONFIG:-${APPDATA:-${HOME}/.config}/gcloud}:/root/.config/gcloud
     environment:
       - CLOUDSDK_CORE_PROJECT=ikedam
     working_dir: /workspace
